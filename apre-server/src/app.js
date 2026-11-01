@@ -19,6 +19,7 @@ const usersRouter = require('./routes/users');
 const securityRouter = require('./routes/security');
 const dashboardRouter = require('./routes/dashboard');
 const salesReportsRouter = require('./routes/reports/sales');
+const salesSummaryRouter = require('./routes/reports/sales-summary');
 const agentPerformanceReportsRouter = require('./routes/reports/agent-performance');
 const customerFeedbackReportsRouter = require('./routes/reports/customer-feedback');
 
@@ -45,6 +46,7 @@ app.use('/api/users', usersRouter);
 app.use('/api/security', securityRouter);
 app.use('/api/dashboard', dashboardRouter);
 app.use('/api/reports/sales', salesReportsRouter);
+app.use('/api/reports/sales', salesSummaryRouter);
 app.use('/api/reports/agent-performance', agentPerformanceReportsRouter);
 app.use('/api/reports/customer-feedback', customerFeedbackReportsRouter);
 
