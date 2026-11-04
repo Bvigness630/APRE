@@ -18,7 +18,8 @@ import { environment } from '../../../../environments/environment';
       <form [formGroup]="newUserForm" (ngSubmit)="addUser();" class="form">
         <div class="form__group">
           <label class="label" for="username">Username<span class="required">*</span></label>
-          <input class="input" type="text" formControlName="username" id="username" name="username">
+          <!-- M-001: Add a username placeholder when creating an account. -->
+	  <input class="input" type="text" formControlName="username" id="username" name="username" placeholder="Enter your username">
         </div>
 
         <div class="form__group">
