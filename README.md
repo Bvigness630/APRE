@@ -1,70 +1,37 @@
-\# APRE - Sales Summary Report
+# APRE - Average Performance by Agent Report
 
+## Overview
 
+This project adds an Average Performance by Agent report to the APRE application. It retrieves agent performance data from the database, calculates the average performance for each agent, and displays the results in a table.
 
-\## Overview
+## Running the Application
 
+1. Open a terminal in `apre-server` and run:
 
+   ```bash
+   npm install
+   npm start
+   ```
 
-This project adds a Sales Summary report to the APRE application. It retrieves sales data from the database, groups it by salesperson and region, and displays the totals in a table.
+2. Open another terminal in `apre-client` and run:
 
+   ```bash
+   npm install
+   npx ng serve
+   ```
 
+3. Open `http://localhost:4200/` in your browser.
 
-\## Running the Application
+## API Endpoint
 
+`GET /api/reports/agent-performance/average-performance-by-agent`
 
+Returns agent IDs, agent names, and average performance values.
 
-1\. Open a terminal in `apre-server` and run:
+## Testing
 
+Run `npm test -- --runInBand` from the `apre-server` folder to execute the server test suite.
 
-
-&#x20;  ```bash
-
-&#x20;  npm install
-
-&#x20;  npm start
-
-&#x20;  ```
-
-
-
-2\. Open another terminal in `apre-client` and run:
-
-
-
-&#x20;  ```bash
-
-&#x20;  npm install
-
-&#x20;  npx ng serve
-
-&#x20;  ```
-
-
-
-3\. Open `http://localhost:4200/` in your browser.
-
-
-
-\## API Endpoint
-
-
-
-`GET /api/reports/sales/summary`
-
-
-
-Returns sales totals grouped by salesperson and region.
-
-
-
-\## Testing
-
-
-
-Run `npm test` from both the `apre-server` and `apre-client` folders to execute their respective test suites.
-
-
+Run `npm test -- --watch=false` from the `apre-client` folder to execute the Angular test suite.
 
 Run `npm run build` from `apre-client` to build the Angular application.
-
