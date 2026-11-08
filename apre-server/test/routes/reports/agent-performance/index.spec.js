@@ -60,7 +60,83 @@ describe('Apre Agent Performance API', () => {
       type: 'error'
     });
   });
+  // Test the average-performance-by-agent endpoint
+  it('should fetch average performance data for each agent', async () => {
+    mongo.mockImplementation(async (callback) => {
+      const db = {
+        collection: jest.fn().mockReturnThis(),
+        aggregate: jest.fn().mockReturnValue({
+          toArray: jest.fn().mockResolvedValue([
+            {
+              agentId: 101,
+              name: 'Agent A',
+              averagePerformance: 85
+            },
+            {
+              agentId: 102,
+              name: 'Agent B',
+              averagePerformance: 90
+            }
+          ])
+        })
+      };
+      await callback(db);
+    });
 
+    const response = await request(app).get('/api/reports/agent-performance/average-performance-by-agent');
+
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual([
+      {
+        agentId: 101,
+        name: 'Agent A',
+        averagePerformance: 85
+      },
+      {
+        agentId: 102,
+        name: 'Agent B',
+        averagePerformance: 90
+      }
+    ]);
+  });
+
+  // Test the average-performance-by-agent endpoint with no data
+  it('should return an empty array when no agent performance data is available', async () => {
+    mongo.mockImplementation(async (callback) => {
+      const db = {
+        collection: jest.fn().mockReturnThis(),
+        aggregate: jest.fn().mockReturnValue({
+          toArray: jest.fn().mockResolvedValue([])
+        })
+      };
+      await callback(db);
+    });
+
+    const response = await request(app).get('/api/reports/agent-performance/average-performance-by-agent');
+
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual([]);
+  });
+
+  // Test that the average-performance-by-agent endpoint runs the aggregation
+  it('should run the aggregation to retrieve agent performance data', async () => {
+    const aggregate = jest.fn().mockReturnValue({
+      toArray: jest.fn().mockResolvedValue([])
+    });
+
+    mongo.mockImplementation(async (callback) => {
+      const db = {
+        collection: jest.fn().mockReturnThis(),
+        aggregate
+      };
+      await callback(db);
+    });
+
+    const response = await request(app).get('/api/reports/agent-performance/average-performance-by-agent');
+
+    expect(response.status).toBe(200);
+    expect(aggregate).toHaveBeenCalledTimes(1);
+  });
   // Test the call-duration-by-date-range endpoint with an invalid date range
   it('should return 404 for an invalid endpoint', async () => {
     const response = await request(app).get('/api/reports/agent-performance/invalid-endpoint'); // Send a GET request to an invalid endpoint

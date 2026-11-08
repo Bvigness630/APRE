@@ -93,4 +93,62 @@ router.get('/call-duration-by-date-range', (req, res, next) => {
   }
 });
 
+/**
+ * @description
+ *
+ * GET /average-performance-by-agent
+ *
+ * Fetches average performance data for each agent.
+ */
+router.get('/average-performance-by-agent', (req, res, next) => {
+  try {
+    mongo(async db => {
+      const data = await db.collection('agentPerformance').aggregate([
+        {
+          $lookup: {
+            from: 'agents',
+            localField: 'agentId',
+            foreignField: 'agentId',
+            as: 'agentInfo'
+          }
+        },
+        {
+          $unwind: '$agentInfo'
+        },
+        {
+          $group: {
+            _id: {
+              agentId: '$agentId',
+              name: '$agentInfo.name'
+            },
+            averagePerformance: {
+              $avg: {
+                $avg: '$performanceMetrics.value'
+              }
+            }
+          }
+        },
+        {
+          $project: {
+            _id: 0,
+            agentId: '$_id.agentId',
+            name: '$_id.name',
+            averagePerformance: 1
+          }
+        },
+        {
+          $sort: {
+            name: 1
+          }
+        }
+      ]).toArray();
+
+      res.send(data);
+    }, next);
+  } catch (err) {
+    console.error('Error in /average-performance-by-agent', err);
+    next(err);
+  }
+});
+
 module.exports = router;
