@@ -25,7 +25,8 @@ import { CookieService } from 'ngx-cookie-service';
         </div>
         <div class="signin__form-group">
           <label for="password" class="signin__label">Password</label>
-          <input id="password" formControlName="password" type="password" class="signin__input" />
+          <!-- M-029: Add a password placeholder to help users identify the field before entering their password. -->
+	  <input id="password" formControlName="password" type="password" class="signin__input" placeholder="Enter your password" />
         </div>
         <input type="submit" class="signin__button" Value="Submit" />
       </form>
