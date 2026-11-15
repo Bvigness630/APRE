@@ -27,6 +27,7 @@ import { CustomerFeedbackComponent } from './reports/customer-feedback/customer-
 import { SalesByRegionTabularComponent } from './reports/sales/sales-by-region-tabular/sales-by-region-tabular.component';
 import { SalesSummaryComponent } from './reports/sales/sales-summary/sales-summary.component';
 import { AveragePerformanceByAgentComponent } from './reports/agent-performance/average-performance-by-agent/average-performance-by-agent.component';
+import { CustomerFeedbackReportComponent } from './reports/customer-feedback/customer-feedback-report/customer-feedback-report.component';
 
 // Export user-management routes
 export const userManagementRoutes: Routes = [
@@ -82,6 +83,10 @@ export const customerFeedbackRoutes: Routes = [
   {
     path: 'channel-rating-by-month',
     component: ChannelRatingByMonthComponent
+  },
+  {
+    path: 'customer-feedback-report',
+    component: CustomerFeedbackReportComponent
   }
 ];
 
