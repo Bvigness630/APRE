@@ -92,4 +92,38 @@ router.get('/channel-rating-by-month', (req, res, next) => {
   }
 });
 
+/**
+ * @description
+ *
+ * GET /customer-feedback-report
+ *
+ * Fetches customer feedback records with date, channel, and rating.
+ */
+router.get('/customer-feedback-report', (req, res, next) => {
+  try {
+    mongo(async db => {
+      const data = await db.collection('customerFeedback').aggregate([
+        {
+          $project: {
+            _id: 0,
+            date: 1,
+            channel: 1,
+            rating: 1
+          }
+        },
+        {
+          $sort: {
+            date: -1
+          }
+        }
+      ]).toArray();
+
+      res.send(data);
+    }, next);
+  } catch (err) {
+    console.error('Error in /customer-feedback-report', err);
+    next(err);
+  }
+});
+
 module.exports = router;

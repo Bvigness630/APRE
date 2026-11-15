@@ -35,12 +35,10 @@ describe('Apre Customer Feedback API', () => {
       await callback(db);
     });
 
-    const response = await request(app).get('/api/reports/customer-feedback/channel-rating-by-month?month=1'); // Send a GET request to the channel-rating-by-month endpoint
+    const response = await request(app).get('/api/reports/customer-feedback/channel-rating-by-month?month=1');
 
-    // Expect a 200 status code
     expect(response.status).toBe(200);
 
-    // Expect the response body to match the expected data
     expect(response.body).toEqual([
       {
         channels: ['Email', 'Phone'],
@@ -51,10 +49,9 @@ describe('Apre Customer Feedback API', () => {
 
   // Test the channel-rating-by-month endpoint with missing parameters
   it('should return 400 if the month parameter is missing', async () => {
-    const response = await request(app).get('/api/reports/customer-feedback/channel-rating-by-month'); // Send a GET request to the channel-rating-by-month endpoint with missing month
-    expect(response.status).toBe(400); // Expect a 400 status code
+    const response = await request(app).get('/api/reports/customer-feedback/channel-rating-by-month');
+    expect(response.status).toBe(400);
 
-    // Expect the response body to match the expected data
     expect(response.body).toEqual({
       message: 'month and channel are required',
       status: 400,
@@ -64,11 +61,85 @@ describe('Apre Customer Feedback API', () => {
 
   // Test the channel-rating-by-month endpoint with an invalid month
   it('should return 404 for an invalid endpoint', async () => {
-    // Send a GET request to an invalid endpoint
     const response = await request(app).get('/api/reports/customer-feedback/invalid-endpoint');
-    expect(response.status).toBe(404); // Expect a 404 status code
+    expect(response.status).toBe(404);
 
-    // Expect the response body to match the expected data
+    expect(response.body).toEqual({
+      message: 'Not Found',
+      status: 404,
+      type: 'error'
+    });
+  });
+
+  // Test the customer-feedback-report endpoint
+  it('should fetch customer feedback records', async () => {
+    mongo.mockImplementation(async (callback) => {
+      const db = {
+        collection: jest.fn().mockReturnThis(),
+        aggregate: jest.fn().mockReturnValue({
+          toArray: jest.fn().mockResolvedValue([
+            {
+              date: '2026-01-15',
+              channel: 'Email',
+              rating: 4
+            },
+            {
+              date: '2026-01-14',
+              channel: 'Phone',
+              rating: 5
+            }
+          ])
+        })
+      };
+      await callback(db);
+    });
+
+    const response = await request(app).get(
+      '/api/reports/customer-feedback/customer-feedback-report'
+    );
+
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual([
+      {
+        date: '2026-01-15',
+        channel: 'Email',
+        rating: 4
+      },
+      {
+        date: '2026-01-14',
+        channel: 'Phone',
+        rating: 5
+      }
+    ]);
+  });
+
+  // Test the customer-feedback-report endpoint with no records
+  it('should return an empty array when no customer feedback records exist', async () => {
+    mongo.mockImplementation(async (callback) => {
+      const db = {
+        collection: jest.fn().mockReturnThis(),
+        aggregate: jest.fn().mockReturnValue({
+          toArray: jest.fn().mockResolvedValue([])
+        })
+      };
+      await callback(db);
+    });
+
+    const response = await request(app).get(
+      '/api/reports/customer-feedback/customer-feedback-report'
+    );
+
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual([]);
+  });
+
+  // Test the customer-feedback-report endpoint with an invalid report
+  it('should return 404 for an invalid customer feedback report endpoint', async () => {
+    const response = await request(app).get(
+      '/api/reports/customer-feedback/invalid-report'
+    );
+
+    expect(response.status).toBe(404);
     expect(response.body).toEqual({
       message: 'Not Found',
       status: 404,
